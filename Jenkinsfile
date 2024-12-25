@@ -10,7 +10,7 @@ pipeline {
       steps {
         // Using AWS credentials securely
         withCredentials([usernamePassword(
-            credentialsId: 'aws-access-upwd',
+            credentialsId: 'aws-access-key-upwd',
             usernameVariable: 'AWS_ACCESS_KEY_ID',
             passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
