@@ -1,97 +1,69 @@
 pipeline {
-    agent any
+  agent any
 
-    parameters {
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-        choice(name: 'action', choices: ['apply', 'destroy'], description: 'Select the action to perform')
+  environment {
+    TERRAFORM_DIR = "./terraform/stages"
+  }
+
+  stages {
+    stage('Dev') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-access-key-upwd', 
+                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          script {
+            sh "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+            sh "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            sh "terraform init -chdir=${TERRAFORM_DIR}/dev"
+            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/dev"
+          }
+        }
+      }
     }
-
-    environment {
-        TERRAFORM_DIR         = "./terraform/stages"
-        AWS_ACCESS_KEY_ID     = credentials('aws-secret-key')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
+    stage('QA') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-access-key', 
+                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          script {
+            input "Proceed to QA?"
+            sh "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+            sh "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            sh "terraform init -chdir=${TERRAFORM_DIR}/qa"
+            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/qa"
+          }
+        }
+      }
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/ahmvdshafiq/popQuizRegovShafiq.git'
-            }
+    stage('UAT') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-access-key', 
+                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          script {
+            input "Proceed to UAT?"
+            sh "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+            sh "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            sh "terraform init -chdir=${TERRAFORM_DIR}/uat"
+            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/uat"
+          }
         }
-
-        stage('Dev') {
-            steps {
-                script {
-                    input message: 'Approve deployment to Dev?', ok: 'Proceed'
-                    sh "terraform init -chdir=${TERRAFORM_DIR}/dev"
-                    sh "terraform plan -out=${TERRAFORM_DIR}/dev/tfplan -chdir=${TERRAFORM_DIR}/dev"
-                    if (params.action == 'apply') {
-                        sh "terraform apply -input=false ${TERRAFORM_DIR}/dev/tfplan"
-                    } else if (params.action == 'destroy') {
-                        sh "terraform destroy --auto-approve -chdir=${TERRAFORM_DIR}/dev"
-                    }
-                }
-            }
-        }
-
-        stage('QA') {
-            steps {
-                script {
-                    input message: 'Approve deployment to QA?', ok: 'Proceed'
-                    sh "terraform init -chdir=${TERRAFORM_DIR}/qa"
-                    sh "terraform plan -out=${TERRAFORM_DIR}/qa/tfplan -chdir=${TERRAFORM_DIR}/qa"
-                    if (params.action == 'apply') {
-                        sh "terraform apply -input=false ${TERRAFORM_DIR}/qa/tfplan"
-                    } else if (params.action == 'destroy') {
-                        sh "terraform destroy --auto-approve -chdir=${TERRAFORM_DIR}/qa"
-                    }
-                }
-            }
-        }
-
-        stage('UAT') {
-            steps {
-                script {
-                    input message: 'Approve deployment to UAT?', ok: 'Proceed'
-                    sh "terraform init -chdir=${TERRAFORM_DIR}/uat"
-                    sh "terraform plan -out=${TERRAFORM_DIR}/uat/tfplan -chdir=${TERRAFORM_DIR}/uat"
-                    if (params.action == 'apply') {
-                        sh "terraform apply -input=false ${TERRAFORM_DIR}/uat/tfplan"
-                    } else if (params.action == 'destroy') {
-                        sh "terraform destroy --auto-approve -chdir=${TERRAFORM_DIR}/uat"
-                    }
-                }
-            }
-        }
-
-        stage('Prod') {
-            steps {
-                script {
-                    input message: 'Approve deployment to Prod?', ok: 'Proceed'
-                    sh "terraform init -chdir=${TERRAFORM_DIR}/prod"
-                    sh "terraform plan -out=${TERRAFORM_DIR}/prod/tfplan -chdir=${TERRAFORM_DIR}/prod"
-                    if (params.action == 'apply') {
-                        sh "terraform apply -input=false ${TERRAFORM_DIR}/prod/tfplan"
-                    } else if (params.action == 'destroy') {
-                        sh "terraform destroy --auto-approve -chdir=${TERRAFORM_DIR}/prod"
-                    }
-                }
-            }
-        }
+      }
     }
-
-    post {
-        always {
-            script {
-                // Clean up sensitive files
-                sh "find ${TERRAFORM_DIR} -name 'tfplan*' -delete"
-            }
+    stage('Prod') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-access-key', 
+                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          script {
+            input "Deploy to Prod?"
+            sh "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+            sh "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            sh "terraform init -chdir=${TERRAFORM_DIR}/prod"
+            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/prod"
+          }
         }
-        success {
-            echo 'Pipeline executed successfully.'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for details.'
-        }
+      }
     }
+  }
 }
