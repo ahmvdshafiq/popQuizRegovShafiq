@@ -6,53 +6,79 @@ pipeline {
   }
 
   stages {
-    stage('Dev') {
+    stage('Initialize Terraform for Dev') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-access-key-upwd', 
-                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
-            sh 'terraform init -chdir=$TERRAFORM_DIR/dev'
-            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/dev'
+        // Using AWS credentials securely
+        withCredentials([usernamePassword(
+            credentialsId: 'aws-access-upwd',
+            usernameVariable: 'AWS_ACCESS_KEY_ID',
+            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh '''
+            export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            terraform init -chdir=$TERRAFORM_DIR/dev
+            terraform apply -auto-approve -chdir=$TERRAFORM_DIR/dev
+          '''
+        }
+      }
+    }
+
+    stage('Promote to QA') {
+      steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'aws-access-key',
+            usernameVariable: 'AWS_ACCESS_KEY_ID',
+            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          script {
+            input "Deploy to QA?"
+            sh '''
+              export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+              export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+              terraform init -chdir=$TERRAFORM_DIR/qa
+              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/qa
+            '''
           }
         }
       }
     }
-    stage('QA') {
+
+    stage('Promote to UAT') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-access-upwd', 
-                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          input "Proceed to QA?"
-          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
-            sh 'terraform init -chdir=$TERRAFORM_DIR/qa'
-            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/qa'
+        withCredentials([usernamePassword(
+            credentialsId: 'aws-access-key',
+            usernameVariable: 'AWS_ACCESS_KEY_ID',
+            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          script {
+            input "Deploy to UAT?"
+            sh '''
+              export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+              export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+              terraform init -chdir=$TERRAFORM_DIR/uat
+              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/uat
+            '''
           }
         }
       }
     }
-    stage('UAT') {
+
+    stage('Deploy to Production') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-access-upwd', 
-                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          input "Proceed to UAT?"
-          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
-            sh 'terraform init -chdir=$TERRAFORM_DIR/uat'
-            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/uat'
-          }
-        }
-      }
-    }
-    stage('Prod') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-access-upwd', 
-                                          usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          input "Deploy to Prod?"
-          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
-            sh 'terraform init -chdir=$TERRAFORM_DIR/prod'
-            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/prod'
+        withCredentials([usernamePassword(
+            credentialsId: 'aws-access-key',
+            usernameVariable: 'AWS_ACCESS_KEY_ID',
+            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          script {
+            input "Deploy to Production?"
+            sh '''
+              export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+              export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+              terraform init -chdir=$TERRAFORM_DIR/prod
+              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/prod
+            '''
           }
         }
       }
