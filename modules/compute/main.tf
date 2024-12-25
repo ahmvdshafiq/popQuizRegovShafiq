@@ -1,15 +1,19 @@
-#configure ec2 instance
+#Defines the reusable ec2 instance infrastructure resources
 
-resource "aws_instance" "app_instance_shafiq" {
-  ami           = var.ami_id 
-  instance_type = "t2.micro" 
-
-  subnet_id = module.networking.public_subnet_id
-  security_groups = [
-    module.networking.security_group_id
-  ]
-
+resource "aws_instance" "app_server" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  subnet_id     = var.subnet_id
   tags = {
-    Name = "app-${var.environment}"
+    Name = "app-server-${var.environment}"
   }
 }
+
+output "instance_id" {
+  value = aws_instance.app_server.id
+}
+
+output "instance_public_ip" {
+  value = aws_instance.app_server.public_ip
+}
+
