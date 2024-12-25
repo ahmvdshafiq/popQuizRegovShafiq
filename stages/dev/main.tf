@@ -7,9 +7,8 @@ module "networking" {
 }
 
 module "compute" {
-  source = "/home/mad/terraform/terraform/modules/compute"
-
-  ami_id      = "ami-0c02fb55956c7d316" 
+  source      = "/home/mad/terraform/terraform/modules/compute"
+  ami_id      = "ami-0c02fb55956c7d316"
   environment = "dev"
   networking  = module.networking
 }
