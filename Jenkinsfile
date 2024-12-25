@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    TERRAFORM_DIR = "./terraform/stages"
+    TERRAFORM_DIR = "/home/mad/terraform/terraform"
   }
 
   stages {
