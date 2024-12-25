@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 terraform.tfvars
 .terraform/
+=======
+terraform.tfvars
+>>>>>>> e28b05b5c737054619dc6bc7fedbaf47d5164cc8
