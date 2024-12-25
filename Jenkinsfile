@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    TERRAFORM_DIR = "./home/mad/terraform/terraform/stages"
+    TERRAFORM_DIR = "/home/mad/terraform/terraform/stages"
   }
 
   stages {
@@ -17,8 +17,9 @@ pipeline {
           sh '''
             export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-            terraform init -chdir=$TERRAFORM_DIR/dev
-            terraform apply -auto-approve -chdir=$TERRAFORM_DIR/dev
+            cd $TERRAFORM_DIR/dev
+            terraform init
+            terraform apply -auto-approve
           '''
         }
       }
@@ -36,8 +37,9 @@ pipeline {
             sh '''
               export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
               export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-              terraform init -chdir=$TERRAFORM_DIR/qa
-              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/qa
+              cd $TERRAFORM_DIR/qa
+              terraform init
+              terraform apply -auto-approve
             '''
           }
         }
@@ -56,8 +58,9 @@ pipeline {
             sh '''
               export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
               export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-              terraform init -chdir=$TERRAFORM_DIR/uat
-              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/uat
+              cd $TERRAFORM_DIR/uat
+              terraform init
+              terraform apply -auto-approve
             '''
           }
         }
@@ -76,8 +79,9 @@ pipeline {
             sh '''
               export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
               export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-              terraform init -chdir=$TERRAFORM_DIR/prod
-              terraform apply -auto-approve -chdir=$TERRAFORM_DIR/prod
+              cd $TERRAFORM_DIR/prod
+              terraform init
+              terraform apply -auto-approve
             '''
           }
         }
