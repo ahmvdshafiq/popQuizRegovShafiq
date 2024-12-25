@@ -1,5 +1,5 @@
 module "networking" {
-  source = "../../modules/networking"
+  source = "/home/mad/terraform/terraform/modules/networking"
 
   cidr_block        = "10.0.0.0/16"
   public_subnet_cidr = "10.0.1.0/24"
@@ -7,15 +7,15 @@ module "networking" {
 }
 
 module "compute" {
-  source = "../../modules/compute"
+  source = "/home/mad/terraform/terraform/modules/compute"
 
-  ami_id      = "ami-0c02fb55956c7d316" # Free Tier Amazon Linux 2
+  ami_id      = "ami-0c02fb55956c7d316" 
   environment = "prod"
   networking  = module.networking
 }
 
 module "storage" {
-  source = "../../modules/storage"
+  source = "/home/mad/terraform/terraform/modules/storage"
 
   environment = "prod"
 }
