@@ -17,6 +17,9 @@ pipeline {
           sh '''
             export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            # Debug: List the directory
+            echo "Checking directory structure..."
+            ls -la $TERRAFORM_DIR
             cd $TERRAFORM_DIR/dev
             terraform init
             terraform apply -auto-approve
