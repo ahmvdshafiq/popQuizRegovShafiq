@@ -11,9 +11,9 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'aws-access-key-upwd', 
                                           usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                           passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) {
-            sh "terraform init -chdir=${TERRAFORM_DIR}/dev"
-            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/dev"
+          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
+            sh 'terraform init -chdir=$TERRAFORM_DIR/dev'
+            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/dev'
           }
         }
       }
@@ -24,9 +24,9 @@ pipeline {
                                           usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                           passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           input "Proceed to QA?"
-          withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) {
-            sh "terraform init -chdir=${TERRAFORM_DIR}/qa"
-            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/qa"
+          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
+            sh 'terraform init -chdir=$TERRAFORM_DIR/qa'
+            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/qa'
           }
         }
       }
@@ -37,9 +37,9 @@ pipeline {
                                           usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                           passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           input "Proceed to UAT?"
-          withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) {
-            sh "terraform init -chdir=${TERRAFORM_DIR}/uat"
-            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/uat"
+          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
+            sh 'terraform init -chdir=$TERRAFORM_DIR/uat'
+            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/uat'
           }
         }
       }
@@ -50,9 +50,9 @@ pipeline {
                                           usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                           passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           input "Deploy to Prod?"
-          withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) {
-            sh "terraform init -chdir=${TERRAFORM_DIR}/prod"
-            sh "terraform apply -auto-approve -chdir=${TERRAFORM_DIR}/prod"
+          withEnv(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
+            sh 'terraform init -chdir=$TERRAFORM_DIR/prod'
+            sh 'terraform apply -auto-approve -chdir=$TERRAFORM_DIR/prod'
           }
         }
       }
