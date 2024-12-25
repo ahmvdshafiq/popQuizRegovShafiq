@@ -31,7 +31,7 @@ pipeline {
     stage('Promote to QA') {
       steps {
         withCredentials([usernamePassword(
-            credentialsId: 'aws-access-key',
+            credentialsId: 'aws-access-key-upwd',
             usernameVariable: 'AWS_ACCESS_KEY_ID',
             passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
@@ -52,7 +52,7 @@ pipeline {
     stage('Promote to UAT') {
       steps {
         withCredentials([usernamePassword(
-            credentialsId: 'aws-access-key',
+            credentialsId: 'aws-access-key-upwd',
             usernameVariable: 'AWS_ACCESS_KEY_ID',
             passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
@@ -73,7 +73,7 @@ pipeline {
     stage('Deploy to Production') {
       steps {
         withCredentials([usernamePassword(
-            credentialsId: 'aws-access-key',
+            credentialsId: 'aws-access-key-upwd',
             usernameVariable: 'AWS_ACCESS_KEY_ID',
             passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
