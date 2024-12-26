@@ -10,13 +10,8 @@ variable "instance_type" {
   type        = string
 }
 
-variable "subnet_id" {
-  description = "Subnet ID for the instance"
-  type        = string
-}
-
 variable "environment" {
-  description = "Environment name (e.g., dev, qa, uat, prod)"
+  description = "Environment name (dev, qa, uat, prod)"
   type        = string
 }
 
