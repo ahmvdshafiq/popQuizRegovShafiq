@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "ami_id" {
   description = "AMI ID for the EC2 instance"
   type        = string
-  default     = "ami-0c02fb55956c7d316" # Amazon Linux 2 (Free Tier eligible)
+  default     = "ami-0d6560f3176dc9ec0" # Amazon Linux 2 (Free Tier eligible)
 }
 
 variable "instance_type" {
