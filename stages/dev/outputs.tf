@@ -1,4 +1,4 @@
-Outputs values specific to the stage
+#Outputs values specific to the stage
 
 output "instance_id" {
   description = "ID of the EC2 instance for dev environment"

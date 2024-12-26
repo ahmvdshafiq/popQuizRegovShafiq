@@ -6,11 +6,17 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
-  description = "Instance type for the EC2 instance"
+  description = "EC2 instance type"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "Subnet ID for the instance"
   type        = string
 }
 
 variable "environment" {
-  description = "Environment name (e.g., dev, prod, qa, uat)"
+  description = "Environment name (e.g., dev, qa, uat, prod)"
   type        = string
 }
+

@@ -1,4 +1,4 @@
-Stores environment-specific values
+#Stores environment-specific values
 
 variable "aws_region" {
   description = "AWS region to deploy resources"
