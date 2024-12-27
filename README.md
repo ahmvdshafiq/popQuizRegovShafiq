@@ -16,4 +16,8 @@
 
 ![image](https://github.com/user-attachments/assets/3d970760-9836-4844-a1be-a11e539fd791)
 
+**[Output of this question 2]**
+
+![image](https://github.com/user-attachments/assets/47a9ceef-13ea-4bf9-a70c-c2232088a17f)
+![image](https://github.com/user-attachments/assets/d19c9df1-a81e-4ffb-a07f-39ad9d298700)
 
